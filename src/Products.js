@@ -73,7 +73,7 @@ let listProducts = [
       'https://1ststep.pk/cdn/shop/files/1_f2edf42c-59e6-4a44-aa83-0a0eea3a0833_720x.webp?v=1704113388',
     name: 'SNEAKERS 0120333',
     brand: 'Converse',
-    price: 2599,
+    price: 2500,
     qty: 0,
   },
   {
