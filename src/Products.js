@@ -8,11 +8,13 @@ import {
 } from 'react-native';
 import React from 'react';
 import Header from './Header';
-import {addToCart} from './Redux/action';
-import {useDispatch} from 'react-redux';
+import {addToCart, increaseQuantity, decreaseQuantity} from './Redux/action';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 
 let listProducts = [
   {
+    id: 0,
     image:
       'https://1ststep.pk/cdn/shop/files/7_ba88bcd0-3cb2-4579-9f1e-184cf979c026_720x.jpg?v=1704113181',
     name: 'SNEAKERS 0120332',
@@ -21,6 +23,7 @@ let listProducts = [
     qty: 0,
   },
   {
+    id: 1,
     image:
       'https://1ststep.pk/cdn/shop/files/1_a7f99474-1aa2-4202-ab11-f40f6512e1aa_720x.webp?v=1704113537',
     name: 'SNEAKERS 0120334',
@@ -29,6 +32,7 @@ let listProducts = [
     qty: 0,
   },
   {
+    id: 2,
     image:
       'https://1ststep.pk/cdn/shop/files/1_0fd7d410-243a-4b4f-951b-815c161a6932_720x.webp?v=1713623599',
     name: 'SANDAL 0140863',
@@ -37,6 +41,7 @@ let listProducts = [
     qty: 0,
   },
   {
+    id: 3,
     image:
       'https://1ststep.pk/cdn/shop/files/4_55e9f13a-852e-4aa4-8682-083a6e19769d_720x.webp?v=1710926179',
     name: 'SANDAL 0140773',
@@ -45,6 +50,7 @@ let listProducts = [
     qty: 0,
   },
   {
+    id: 4,
     image:
       'https://1ststep.pk/cdn/shop/files/1_7daf8452-e212-4aaa-af38-080b49947fea_720x.webp?v=1711120789',
     name: 'SANDAL 0140173',
@@ -53,6 +59,7 @@ let listProducts = [
     qty: 0,
   },
   {
+    id: 5,
     image:
       'https://1ststep.pk/cdn/shop/files/4_6edbbfc6-48a5-4caf-9c04-883e5de46bd5_720x.webp?v=1704112943',
     name: 'SNEAKERS 0120331',
@@ -61,14 +68,16 @@ let listProducts = [
     qty: 0,
   },
   {
+    id: 6,
     image:
       'https://1ststep.pk/cdn/shop/files/7_ba88bcd0-3cb2-4579-9f1e-184cf979c026_720x.jpg?v=1704113181',
-    name: 'SNEAKERS 0120332',
+    name: 'SNEAKERS 0120432',
     brand: 'PUMA',
     price: 1200,
     qty: 0,
   },
   {
+    id: 7,
     image:
       'https://1ststep.pk/cdn/shop/files/1_f2edf42c-59e6-4a44-aa83-0a0eea3a0833_720x.webp?v=1704113388',
     name: 'SNEAKERS 0120333',
@@ -77,6 +86,7 @@ let listProducts = [
     qty: 0,
   },
   {
+    id: 8,
     image:
       'https://1ststep.pk/cdn/shop/files/7_30aca93b-5f53-41ab-a218-0ff8df9f7f34_720x.webp?v=1714834317',
     name: 'SLIPPER 0150769',
@@ -85,6 +95,7 @@ let listProducts = [
     qty: 0,
   },
   {
+    id: 9,
     image:
       'https://1ststep.pk/cdn/shop/files/4_0888468c-3bed-4e2c-a1e8-c5cbdca1db88_720x.webp?v=1711965795',
     name: 'SLIPPER 0150649',
@@ -95,17 +106,47 @@ let listProducts = [
 ];
 
 const Products = () => {
+  const cartItem = useSelector(state => state.reducer);
+  const cartCount = cartItem.length;
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+
+  const getTotalPrice = () => {
+    let total = 0;
+    cartItem.map(item => {
+      total = total + item.qty * item.price;
+    });
+    return total;
+  };
+
+  ////-------Call Functions
 
   const handleAddToCart = item => {
-    dispatch(addToCart(item));
+    dispatch(addToCart({...item, qty: 1}));
   };
+  const handleIncreaseQuantity = id => {
+    dispatch(increaseQuantity(id));
+  };
+
+  const handleDecreaseQuantity = id => {
+    dispatch(decreaseQuantity(id));
+  };
+
+  ////------return Cart Item Id
+  const getCartItemById = id => {
+    return cartItem.find(item => item.id === id);
+  };
+
   return (
     <View style={{flex: 1}}>
       <Header />
       <FlatList
         data={listProducts}
+        ///-----KeyExtractor use to get ID Unique
+        keyExtractor={item => item.id.toString()}
         renderItem={({item, index}) => {
+          ///------For Unique ID
+          const cartItem = getCartItemById(item.id);
           return (
             <View style={style.cartItemsStyle}>
               <Image style={style.image} source={{uri: item.image}} />
@@ -125,7 +166,7 @@ const Products = () => {
                     flexDirection: 'row',
                     marginTop: 5,
                   }}>
-                  {item.qty == 0 ? (
+                  {!cartItem ? (
                     <TouchableOpacity
                       onPress={() => handleAddToCart(item)}
                       style={{
@@ -139,13 +180,110 @@ const Products = () => {
                       }}>
                       <Text style={{color: 'white'}}>Add To Cart</Text>
                     </TouchableOpacity>
-                  ) : null}
+                  ) : (
+                    <View style={{flexDirection: 'row'}}>
+                      <TouchableOpacity
+                        onPress={() => handleDecreaseQuantity(item.id)}
+                        style={{
+                          backgroundColor: 'green',
+                          borderRadius: 8,
+                          height: 26,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          paddingLeft: 10,
+                          paddingRight: 10,
+                        }}>
+                        <Text style={{color: 'white'}}>-</Text>
+                      </TouchableOpacity>
+                      <Text
+                        style={{
+                          marginLeft: 10,
+                          fontSize: 16,
+                          fontWeight: '600',
+                          color: 'black',
+                          marginRight: 10,
+                        }}>
+                        {cartItem.qty}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => handleIncreaseQuantity(item.id)}
+                        style={{
+                          backgroundColor: 'green',
+                          borderRadius: 8,
+                          height: 26,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          paddingLeft: 10,
+                          paddingRight: 10,
+                        }}>
+                        <Text style={{color: 'white'}}>+</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
                 </View>
               </View>
             </View>
           );
         }}
       />
+      {cartItem.length > 0 ? (
+        <View
+          style={{
+            width: '100%',
+            height: 70,
+            backgroundColor: '#faebd7',
+            position: 'absolute',
+            bottom: 0,
+            borderTopRightRadius: 30,
+            borderTopLeftRadius: 30,
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              width: '50%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text style={{color: 'black', fontSize: 16, fontWeight: '800'}}>
+              {'Added Items ' + ' (' + cartCount + ') '}
+            </Text>
+            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
+              {'Total:' + getTotalPrice()}
+            </Text>
+          </View>
+          <View
+            style={{
+              width: '50%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Cart')}
+              style={{
+                width: '70%',
+                height: 35,
+                backgroundColor: 'green',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  textAlign: 'center',
+                  fontSize: 18,
+                  fontWeight: '800',
+                }}>
+                View Cart
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 };

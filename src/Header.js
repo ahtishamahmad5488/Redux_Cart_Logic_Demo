@@ -1,28 +1,23 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
 const Header = () => {
   const cartItem = useSelector(state => state.reducer);
   const cartCount = cartItem.length;
-  const navigation = useNavigation();
 
   return (
     <View>
       <View style={style.header}>
         <Text style={style.textHeader}>Redux Demo</Text>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Cart');
-          }}>
+        <TouchableOpacity>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
               height: 40,
-              width: 100,
+              width: 90,
               marginRight: 10,
               backgroundColor: 'orange',
               borderRadius: 10,

@@ -15,6 +15,7 @@ import {useNavigation} from '@react-navigation/native';
 const Cart = () => {
   const navigation = useNavigation();
   const cartItems = useSelector(state => state.reducer);
+
   const dispatch = useDispatch();
 
   const handleRemoveToCart = item => {
@@ -70,8 +71,13 @@ const Cart = () => {
                     </Text>
                     <Text
                       style={{color: 'green', fontSize: 16, fontWeight: '600'}}>
-                      {'Rs ' + item.price}
+                      {'Quantity: ' + item.qty}
                     </Text>
+                    <Text
+                      style={{color: 'green', fontSize: 16, fontWeight: '600'}}>
+                      {'Total: Rs ' + item.qty * item.price}
+                    </Text>
+
                     <View
                       style={{
                         alignItems: 'center',
