@@ -9,15 +9,21 @@ import {
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
-import {removeToCart} from './Redux/action';
+import {decreaseQuantity, increaseQuantity, removeToCart} from './Redux/action';
 import {useNavigation} from '@react-navigation/native';
 
 const Cart = () => {
   const navigation = useNavigation();
   const cartItems = useSelector(state => state.reducer);
-
   const dispatch = useDispatch();
 
+  ///------Function Handle Remove / Increase / Decrease Quantity
+  const handleIncreaseQuantity = id => {
+    dispatch(increaseQuantity(id));
+  };
+  const handleDecreaseQuantity = id => {
+    dispatch(decreaseQuantity(id));
+  };
   const handleRemoveToCart = item => {
     dispatch(removeToCart(item));
   };
@@ -77,7 +83,44 @@ const Cart = () => {
                       style={{color: 'green', fontSize: 16, fontWeight: '600'}}>
                       {'Total: Rs ' + item.qty * item.price}
                     </Text>
-
+                    <View style={{flexDirection: 'row'}}>
+                      <TouchableOpacity
+                        onPress={() => handleDecreaseQuantity(item.id)}
+                        style={{
+                          backgroundColor: 'green',
+                          borderRadius: 8,
+                          height: 26,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          paddingLeft: 10,
+                          paddingRight: 10,
+                        }}>
+                        <Text style={{color: 'white'}}>-</Text>
+                      </TouchableOpacity>
+                      <Text
+                        style={{
+                          marginLeft: 10,
+                          fontSize: 16,
+                          fontWeight: '600',
+                          color: 'black',
+                          marginRight: 10,
+                        }}>
+                        {item.qty}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => handleIncreaseQuantity(item.id)}
+                        style={{
+                          backgroundColor: 'green',
+                          borderRadius: 8,
+                          height: 26,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          paddingLeft: 10,
+                          paddingRight: 10,
+                        }}>
+                        <Text style={{color: 'white'}}>+</Text>
+                      </TouchableOpacity>
+                    </View>
                     <View
                       style={{
                         alignItems: 'center',
@@ -131,7 +174,7 @@ const style = StyleSheet.create({
   },
   cartItemsStyle: {
     width: '90%',
-    height: 120,
+    height: 160,
     backgroundColor: 'white',
     elevation: 5,
     alignSelf: 'center',
@@ -142,8 +185,8 @@ const style = StyleSheet.create({
     padding: 10,
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 130,
+    height: 140,
     borderRadius: 10,
   },
 });
