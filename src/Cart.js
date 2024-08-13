@@ -46,6 +46,7 @@ const Cart = () => {
             alignItems: 'center',
             paddingTop: 20,
           }}>
+          {/* Navigate to Back Screen */}
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
@@ -83,6 +84,9 @@ const Cart = () => {
                       style={{color: 'green', fontSize: 16, fontWeight: '600'}}>
                       {'Total: Rs ' + item.qty * item.price}
                     </Text>
+
+                    {/* Increase / Decrease / Remove To Cart Logic */}
+
                     <View style={{flexDirection: 'row'}}>
                       <TouchableOpacity
                         onPress={() => handleDecreaseQuantity(item.id)}

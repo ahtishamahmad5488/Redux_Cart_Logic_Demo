@@ -8,10 +8,19 @@ import {
 } from 'react-native';
 import React from 'react';
 import Header from './Header';
+
+///----Import Actions From Action.js
 import {addToCart, increaseQuantity, decreaseQuantity} from './Redux/action';
+
+///----Hooks import from React-Redux
+///----useDispatch used to call Function in redux
+///---useSelector used to get data from store
 import {useDispatch, useSelector} from 'react-redux';
+
+///---Navigation used to navigate to another screen
 import {useNavigation} from '@react-navigation/native';
 
+///-----Product Listing
 let listProducts = [
   {
     id: 0,
@@ -105,15 +114,17 @@ let listProducts = [
   },
 ];
 
+///---Main Product Function
 const Products = () => {
   const cartItem = useSelector(state => state.reducer);
   const cartCount = cartItem.length;
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
+  ///---used to calculate prices of Items
   const getTotalPrice = () => {
     let total = 0;
-    cartItem.map(item => {
+    cartItem.forEach(item => {
       total = total + item.qty * item.price;
     });
     return total;
@@ -133,6 +144,9 @@ const Products = () => {
   };
 
   ////------return Cart Item Id
+  // item: Represents the current element in the cartItem array during each iteration.
+  // item.id === id: The condition that is checked for each item.
+  // It returns true if the id of the current item matches the id passed to the function.
   const getCartItemById = id => {
     return cartItem.find(item => item.id === id);
   };
@@ -142,14 +156,17 @@ const Products = () => {
       <Header />
       <FlatList
         data={listProducts}
-        ///-----KeyExtractor use to get ID Unique
+        ///-----KeyExtractor use to get ID Unique for each item in cartItem
         keyExtractor={item => item.id.toString()}
         renderItem={({item, index}) => {
           ///------For Unique ID
           const cartItem = getCartItemById(item.id);
           return (
             <View style={style.cartItemsStyle}>
+              {/* Images From List */}
               <Image style={style.image} source={{uri: item.image}} />
+
+              {/* OtherInformation From List */}
               <View style={{padding: 10}}>
                 <Text style={{color: 'black', fontSize: 18, fontWeight: '800'}}>
                   {item.name}
@@ -160,6 +177,8 @@ const Products = () => {
                 <Text style={{color: 'green', fontSize: 16, fontWeight: '600'}}>
                   {'Rs ' + item.price}
                 </Text>
+
+                {/* Button Logic Add / Increase / Decrease To Cart */}
                 <View
                   style={{
                     alignItems: 'center',
@@ -226,6 +245,9 @@ const Products = () => {
           );
         }}
       />
+
+      {/* Information About Price & Cart Item Quantity */}
+
       {cartItem.length > 0 ? (
         <View
           style={{
